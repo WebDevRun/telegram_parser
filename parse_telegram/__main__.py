@@ -15,7 +15,7 @@ message_client = getenv("message_client")
 
 if not parsed_chat_id or not message_client:
     print("Нет значения parsed_chat_id в переменных окружения")
-    raise SystemExit
+    exit(1)
 
 parsed_chat_id = int(parsed_chat_id)
 
@@ -23,7 +23,7 @@ client.start()
 
 
 @client.on(NewMessage(chats=parsed_chat_id))
-async def get_messages(event: Message):
+async def get_messages(event: Message) -> None:
     message = event.text
     is_retry_message = event.is_reply
 
@@ -51,14 +51,15 @@ async def get_messages(event: Message):
 
     while True:
         match_values = await get_match_values(match_id)
+        print(match_values)
 
-        if match_values.time / 60 >= 60:
+        if match_values.time.minutes >= 60:
             break
 
         await asyncio.sleep(60)
 
-    is_first_team_equal = message_values.score[0] == match_values.players[0].goal_count
-    is_second_team_equal = message_values.score[1] == match_values.players[1].goal_count
+    is_first_team_equal = message_values.score[0] == match_values.players[1].goal_count
+    is_second_team_equal = message_values.score[1] == match_values.players[0].goal_count
 
     if not (is_first_team_equal and is_second_team_equal):
         print("Warning: счет из сообщения и счет из матча не равны")
@@ -68,7 +69,7 @@ async def get_messages(event: Message):
         message_client,
         "Message from bot!\n"
         + f"{message}\n"
-        + f"Текущее время матча: {match_values.time // 60}:{match_values.time % 60}",
+        + f"Текущее время матча: {match_values.time.minutes}:{match_values.time.seconds}",
     )
 
 

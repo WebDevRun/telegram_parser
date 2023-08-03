@@ -8,17 +8,18 @@ class Player(NamedTuple):
     goal_count: int
 
 
+class Time(NamedTuple):
+    minutes: int
+    seconds: int
+
+
 class MatchValues(NamedTuple):
-    time: int
+    time: Time
     players: tuple[Player, Player]
 
 
-def get_value(dict: dict, key: str):
-    return dict.get(key, 0)
-
-
 async def get_match_values(id: int) -> MatchValues:
-    match_data_url = f"https://hiddentreasure.icu/LiveFeed/GetGameZip?id={id}&lng=ru"
+    match_data_url = f"https://leon.ru/api-2/betline/event/all?ctag=ru-RU&eventId={id}"
     session = ClientSession()
 
     response = await session.get(match_data_url, headers=headers)
@@ -26,16 +27,30 @@ async def get_match_values(id: int) -> MatchValues:
 
     await session.close()
 
-    match_values = match_data["Value"]
-    first_player = match_values["O1"]
-    second_player = match_values["O2"]
-    time = match_values["SC"]["TS"]
-    goal_count = match_values["SC"]["FS"]
+    first_player: str = match_data["competitors"][0]["name"]
+    second_player: str = match_data["competitors"][1]["name"]
+    score_str: str = match_data["liveStatus"]["score"]
+    score = score_str.split(":")
+
+    if match_data["liveStatus"]["stage"] == "Перерыв":
+        minutes = 45
+        seconds = 0
+    else:
+        minutes: int = match_data["liveStatus"]["fullProgress"]["time"]["minutes"]
+        seconds: int = match_data["liveStatus"]["fullProgress"]["time"]["seconds"]
 
     return MatchValues(
-        time=time,
+        time=Time(minutes, seconds),
         players=(
-            Player(name=first_player, goal_count=get_value(goal_count, "S1")),
-            Player(name=second_player, goal_count=get_value(goal_count, "S2")),
+            Player(name=first_player, goal_count=int(score[0])),
+            Player(name=second_player, goal_count=int(score[1])),
         ),
     )
+
+
+if __name__ == "__main__":
+    import asyncio
+
+    id = int(input("Введите id матча:\n"))
+    match_values = asyncio.run(get_match_values(id))
+    print(match_values)
