@@ -1,5 +1,5 @@
 from aiohttp import ClientSession
-from match.headers import headers
+from .headers import headers
 
 
 async def find_match(match_teams: str) -> int | None:

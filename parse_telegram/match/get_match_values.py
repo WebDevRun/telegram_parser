@@ -1,6 +1,6 @@
 from aiohttp import ClientSession
-from match.headers import headers
 from typing import NamedTuple
+from .headers import headers
 
 
 class Player(NamedTuple):

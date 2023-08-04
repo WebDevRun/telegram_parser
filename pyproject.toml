@@ -16,3 +16,6 @@ aiohttp = "^3.8.5"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+start = "parse_telegram.__main__:__main__"

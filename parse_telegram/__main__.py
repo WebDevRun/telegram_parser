@@ -2,10 +2,10 @@ from telethon.events import NewMessage
 from telethon.tl.custom import Message
 from dotenv import load_dotenv
 from os import getenv
-from match.find_match import find_match
-from match.get_match_values import get_match_values
-from utils.get_values import get_values
-from telegram.connect import client
+from .match.find_match import find_match
+from .match.get_match_values import get_match_values
+from .utils.get_values import get_values
+from .telegram.connect import client
 import asyncio
 
 load_dotenv()
