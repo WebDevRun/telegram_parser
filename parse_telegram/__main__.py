@@ -1,26 +1,17 @@
 from telethon.events import NewMessage
 from telethon.tl.custom import Message
-from dotenv import load_dotenv
-from os import getenv
 import asyncio
 
 from match.find_match import find_match
 from match.get_match_values import get_match_values
 from utils.get_values import get_values
 from telegram.connect import client
-
-load_dotenv()
-
-parsed_chat_id = getenv("parsed_chat_id")
-message_client = getenv("message_client")
-
-if not parsed_chat_id or not message_client:
-    print("Нет значения parsed_chat_id в переменных окружения")
-    exit(1)
-
-parsed_chat_id = int(parsed_chat_id)
+from telegram.check_env import check_env
 
 client.start()
+
+loop = asyncio.get_event_loop()
+parsed_chat_id, client_chat = loop.run_until_complete(check_env())
 
 
 @client.on(NewMessage(chats=parsed_chat_id))
@@ -45,7 +36,7 @@ async def get_messages(event: Message) -> None:
 
     if match_id is None:
         await client.send_message(
-            message_client,
+            client_chat,
             "Message from bot!\n" + f"{message}\n" + f"Матч не найден!\n",
         )
         return
@@ -67,7 +58,7 @@ async def get_messages(event: Message) -> None:
         return
 
     await client.send_message(
-        message_client,
+        client_chat,
         "Message from bot!\n"
         + f"{message}\n"
         + f"Текущее время матча: {match_values.time.minutes}:{match_values.time.seconds}",
