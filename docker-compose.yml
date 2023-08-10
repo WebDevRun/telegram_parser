@@ -1,0 +1,10 @@
+version: '3.8'
+services:
+  parse_telegram:
+    container_name: parse_telegram
+    stdin_open: true
+    tty: true
+    build: .
+    volumes:
+      - ./.env:/parse_telegram/.env
+    restart: unless-stopped
