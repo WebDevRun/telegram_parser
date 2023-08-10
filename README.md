@@ -7,9 +7,25 @@ After than script send message about match.
 
 ## Install
 
-For install packages write:
-
+Create **.env**  and **<phone>.session** files in project folder.
+In .env file write:
 
 ```
-poetry install
+API_ID=
+API_HASH=
+PHONE=
+PARSED_CHAT_ID=
+MESSAGE_CLIENT=
+```
+
+For build image:
+
+```
+docker compose build
+```
+
+For run program:
+
+```
+docker compose run
 ```

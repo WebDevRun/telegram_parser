@@ -7,4 +7,5 @@ services:
     build: .
     volumes:
       - ./.env:/parse_telegram/.env
+      - ./<phone>.session:/parse_telegram/<phone>.session
     restart: unless-stopped
