@@ -8,7 +8,7 @@ load_dotenv()
 
 
 class TargetChats(NamedTuple):
-    parsed_chat_id: str
+    parsed_chat_id: int
     client_chat: str
 
 
@@ -22,4 +22,6 @@ async def check_env() -> TargetChats:
             "Нет PARSED_CHAT_ID или MESSAGE_CLIENT в переменных окружения"
         )
 
-    return TargetChats(parsed_chat_id=parsed_chat_id, client_chat=client_chat)
+    chat_id = int(parsed_chat_id)
+
+    return TargetChats(parsed_chat_id=chat_id, client_chat=client_chat)

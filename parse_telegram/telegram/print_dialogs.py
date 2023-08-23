@@ -1,4 +1,5 @@
 from .connect import client
+from telethon.tl.types import PeerUser
 
 
 async def print_dialogs():
