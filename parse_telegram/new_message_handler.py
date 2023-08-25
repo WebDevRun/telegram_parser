@@ -1,30 +1,30 @@
 from telethon.events import NewMessage
-from telethon.tl.custom import Message
+from telethon.tl.types import Message
 import asyncio
 
 from telegram.check_env import check_env
+from telegram.connect import client
 from match.find_match import find_match
 from match.get_match_values import get_match_values
 from utils.get_values import get_values
-from telegram.connect import client
+from utils.check_scores import check_scores
 
 loop = asyncio.get_event_loop()
 (parsed_chat_id, client_chat) = loop.run_until_complete(check_env())
 
 
-@client.on(NewMessage(chats=client_chat))
-async def get_messages(event: Message) -> None:
-    message = event.text
-    is_retry_message = event.is_reply
+@client.on(NewMessage(chats=parsed_chat_id))
+async def get_messages(event: NewMessage.Event) -> None:
+    message = event.message
 
-    if is_retry_message:
+    if event.reply_to is not None:
         return
 
-    if message is None:
+    if type(message) is not Message:
         print("Warning: Не удалось прочитать сообщение из telegram")
         return
 
-    message_values = get_values(message)
+    message_values = get_values(message.message)
 
     if message_values is None:
         print("Warning: Не удалось обработать сообщение")
@@ -41,23 +41,23 @@ async def get_messages(event: Message) -> None:
 
     while True:
         match_values = await get_match_values(match_id)
-        print(match_values)
+        is_equal_scores = check_scores(
+            message_values.score,
+            (match_values.players[0].goal_count, match_values.players[1].goal_count),
+        )
+
+        if not is_equal_scores:
+            print("Warning: счет из сообщения и счет из матча не равны")
+            return
 
         if match_values.time.minutes >= 60:
             break
 
         await asyncio.sleep(60)
 
-    is_first_team_equal = message_values.score[0] == match_values.players[0].goal_count
-    is_second_team_equal = message_values.score[1] == match_values.players[1].goal_count
-
-    if not (is_first_team_equal and is_second_team_equal):
-        print("Warning: счет из сообщения и счет из матча не равны")
-        return
-
     await client.send_message(
         client_chat,
         "Message from bot!\n"
-        + f"{message}\n"
+        + f"{message.message}\n"
         + f"Текущее время матча: {match_values.time.minutes}:{match_values.time.seconds}",
     )
