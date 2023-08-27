@@ -9,6 +9,8 @@ from match.get_match_values import get_match_values
 from utils.get_values import get_values
 from utils.check_scores import check_scores
 
+LAST_TICK_MINUTE = 60
+
 loop = asyncio.get_event_loop()
 (parsed_chat_id, client_chat) = loop.run_until_complete(check_env())
 
@@ -49,7 +51,7 @@ async def get_messages(event: NewMessage.Event) -> None:
             print("Warning: счет из сообщения и счет из матча не равны")
             return
 
-        if match_values.time.minutes >= 60:
+        if match_values.time.minutes >= LAST_TICK_MINUTE - 1:
             break
 
         await asyncio.sleep(60)
