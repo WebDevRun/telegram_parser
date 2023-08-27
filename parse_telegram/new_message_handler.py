@@ -15,16 +15,15 @@ loop = asyncio.get_event_loop()
 
 @client.on(NewMessage(chats=parsed_chat_id))
 async def get_messages(event: NewMessage.Event) -> None:
-    message = event.message
-
     if event.reply_to is not None:
         return
 
-    if type(message) is not Message:
+    if type(event.message) is not Message:
         print("Warning: Не удалось прочитать сообщение из telegram")
         return
 
-    message_values = get_values(message.message)
+    message = event.message.message
+    message_values = get_values(message)
 
     if message_values is None:
         print("Warning: Не удалось обработать сообщение")
@@ -58,6 +57,6 @@ async def get_messages(event: NewMessage.Event) -> None:
     await client.send_message(
         client_chat,
         "Message from bot!\n"
-        + f"{message.message}\n"
+        + f"{message}\n"
         + f"Текущее время матча: {match_values.time.minutes}:{match_values.time.seconds}",
     )
