@@ -1,6 +1,7 @@
-from telethon.sync import TelegramClient
-from dotenv import load_dotenv
 from os import getenv
+
+from dotenv import load_dotenv
+from telethon.sync import TelegramClient
 
 load_dotenv()
 

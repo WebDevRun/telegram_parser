@@ -1,5 +1,5 @@
 from aiohttp import ClientSession
-from .headers import headers
+from match.headers import headers
 
 
 async def find_match(match_teams: str) -> int | None:
@@ -16,7 +16,7 @@ async def find_match(match_teams: str) -> int | None:
         id: int = match_json[0]["id"]
         return id
 
-    except:
+    except Exception:
         return None
 
     finally:

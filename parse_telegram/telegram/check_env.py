@@ -1,6 +1,7 @@
-from dotenv import load_dotenv
 from os import getenv
 from typing import NamedTuple
+
+from dotenv import load_dotenv
 
 from .print_dialogs import print_dialogs
 

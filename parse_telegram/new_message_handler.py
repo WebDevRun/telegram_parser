@@ -1,13 +1,13 @@
-from telethon.events import NewMessage
-from telethon.tl.types import Message
 import asyncio
 
-from telegram.check_env import check_env
-from telegram.connect import client
 from match.find_match import find_match
 from match.get_match_values import get_match_values
-from utils.get_values import get_values
+from telegram.check_env import check_env
+from telegram.connect import client
+from telethon.events import NewMessage
+from telethon.tl.types import Message
 from utils.check_scores import check_scores
+from utils.get_values import get_values
 
 LAST_TICK_MINUTE = 60
 
@@ -36,7 +36,7 @@ async def get_messages(event: NewMessage.Event) -> None:
     if match_id is None:
         await client.send_message(
             client_chat,
-            "Message from bot!\n" + f"{message}\n" + f"Матч не найден!\n",
+            "Message from bot!\n" + f"{message}\n" + "Матч не найден!\n",
         )
         return
 
@@ -60,5 +60,6 @@ async def get_messages(event: NewMessage.Event) -> None:
         client_chat,
         "Message from bot!\n"
         + f"{message}\n"
-        + f"Текущее время матча: {match_values.time.minutes}:{match_values.time.seconds}",
+        + f"Текущее время матча: \
+            {match_values.time.minutes}:{match_values.time.seconds}",
     )
