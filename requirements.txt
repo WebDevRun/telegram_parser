@@ -15,5 +15,5 @@ PySocks==1.7.1
 pytest==7.4.0
 python-dotenv==1.0.0
 rsa==4.9
-Telethon==1.29.3
+Telethon==1.30.3
 yarl==1.9.2
